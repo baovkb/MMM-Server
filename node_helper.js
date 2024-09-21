@@ -60,6 +60,9 @@ module.exports = NodeHelper.create({
 					case 'request record volume':
 						this.sendSocketNotification('REQUEST_RECORD_VOLUME', msg['data']);
 						break;
+					case 'request update config module':
+						this.sendSocketNotification('REQUEST_UPDATE_CONFIG_MODULE', msg['data']);
+						break;
 					default: break;
 				}
 			});

@@ -37,17 +37,16 @@ Module.register("MMM-Server", {
 		// once everybody is loaded up
 		if(notification==="ALL_MODULES_STARTED") {
 			this.sendSocketNotification("CONFIG",this.config)
-		} else if (notification === "EXT_VOLUME-SPEAKER_GET") {
-			this.speakerVolume = payload;
+		} else if (notification === "EXT_VOLUME_GET") {
+			this.speakerVolume = payload['Speaker'];
+			this.recordVolume = payload['Recorder'];
+
 			this.sendUpdate({
-				'action': 'speaker volume',
-				'data': this.speakerVolume
-			});
-		} else if (notification === "EXT_VOLUME-RECORDER_GET") {
-			this.recordVolume = payload;
-			this.sendUpdate({
-				'action': 'record volume',
-				'data': this.recordVolume
+				'action': 'volume',
+				'data': {
+					'Speaker': this.speakerVolume,
+					'Recorder': this.recordVolume
+				}
 			});
 		} else if (notification === "DOM_OBJECTS_CREATED") {
 			this.modules = [];
@@ -87,6 +86,8 @@ Module.register("MMM-Server", {
 		} else if (notification === "REQUEST_RECORD_VOLUME") {
 			this.sendNotification("EXT_VOLUME-RECORDER_SET", payload);
 			console.log('notify record volume');
+		} else if (notification === 'REQUEST_UPDATE_CONFIG_MODULE') {
+
 		}
 	},
 
