@@ -81,6 +81,12 @@ Module.register("MMM-Server", {
 				'record volume': this.recordVolume,
 				'all modules': this.modules
 			});
+		} else if (notification === "REQUEST_SPEAKER_VOLUME") {
+			this.sendNotification("EXT_VOLUME-SPEAKER_SET", payload);
+			console.log('notify speaker volume');
+		} else if (notification === "REQUEST_RECORD_VOLUME") {
+			this.sendNotification("EXT_VOLUME-RECORDER_SET", payload);
+			console.log('notify record volume');
 		}
 	},
 

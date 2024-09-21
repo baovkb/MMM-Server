@@ -50,8 +50,18 @@ module.exports = NodeHelper.create({
 			});
 		  
 			ws.on('message', message => {
-			  console.log('received: %s', message);
-			  ws.send('Hello from server');
+				msg = JSON.parse(message);
+				if (msg['action'] === undefined) return;
+
+				switch (msg['action']) {
+					case 'request speaker volume':
+						this.sendSocketNotification("REQUEST_SPEAKER_VOLUME", msg['data']);
+						break;
+					case 'request record volume':
+						this.sendSocketNotification('REQUEST_RECORD_VOLUME', msg['data']);
+						break;
+					default: break;
+				}
 			});
 		  });
 		  
