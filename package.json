@@ -1,0 +1,15 @@
+{
+  "name": "mmm-server",
+  "version": "1.0.0",
+  "description": "sample MM module:",
+  "main": "MMM-Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
