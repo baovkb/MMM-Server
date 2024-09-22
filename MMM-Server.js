@@ -2,6 +2,9 @@ Module.register("MMM-Server", {
 	speakerVolume: 0,
 	recordVolume: 0,
 	modules: [],
+	page: 0,
+	total_page: 0,
+	page_modules: [],
 
 	defaults: {
 		message: "default message if none supplied in config.js"
@@ -38,6 +41,9 @@ Module.register("MMM-Server", {
 		if(notification==="ALL_MODULES_STARTED") {
 			this.sendSocketNotification("CONFIG",this.config)
 		} else if (notification === "EXT_VOLUME_GET") {
+			if (this.speakerVolume == payload['Speaker'] && this.recordVolume == payload['Recorder'])
+				return;
+
 			this.speakerVolume = payload['Speaker'];
 			this.recordVolume = payload['Recorder'];
 
@@ -61,9 +67,26 @@ Module.register("MMM-Server", {
 				'action': 'all modules',
 				'data': this.modules
 			})
-		}
+		} else if (notification === "MMM-Server") {
+			switch (payload['type']) {
+				case 'MODULES_UPDATED':
+				case 'PAGE_CHANGED':
+					this.page = payload['page'];
+					this.total_page = payload['totalPage'];
+					this.page_modules = payload['page_modules'];
 
-		console.log(`mmm server receive msg: ${notification} ${payload}`);
+					this.sendUpdate({
+						'action': 'modules by page',
+						'data': {
+							page: payload['page'],
+							total_page: payload['totalPage'],
+							page_modules: payload['page_modules']
+						}
+					});
+					break;
+				default: return;
+			}
+		}
 	},
 
 	sendUpdate: function(payload) {
@@ -78,46 +101,32 @@ Module.register("MMM-Server", {
 				'action': 'system info',
 				'speaker volume': this.speakerVolume,
 				'record volume': this.recordVolume,
-				'all modules': this.modules
+				'all modules': this.modules,
+				'modules by page': {
+							page: payload['page'],
+							total_page: payload['totalPage'],
+							page_modules: payload['page_modules']
+						}
 			});
 		} else if (notification === "REQUEST_SPEAKER_VOLUME") {
 			this.sendNotification("EXT_VOLUME-SPEAKER_SET", payload);
-			console.log('notify speaker volume');
 		} else if (notification === "REQUEST_RECORD_VOLUME") {
 			this.sendNotification("EXT_VOLUME-RECORDER_SET", payload);
-			console.log('notify record volume');
 		} else if (notification === 'REQUEST_UPDATE_CONFIG_MODULE') {
-
+			
 		}
 	},
 
-	// system notification your module is being hidden
-	// typically you would stop doing UI updates (getDom/updateDom) if the module is hidden
 	suspend: function(){
 
 	},
 
-	// system notification your module is being unhidden/shown
-	// typically you would resume doing UI updates (getDom/updateDom) if the module is shown
 	resume: function(){
 
 	},
 
-	// this is the major worker of the module, it provides the displayable content for this module
 	getDom: function() {
 		var wrapper = document.createElement("div");
-
-		// if user supplied message text in its module config, use it
-		if(this.config.hasOwnProperty("message")){
-			// using text from module config block in config.js
-			wrapper.innerHTML = this.config.message;
-		}
-		else{
-		// use hard coded text
-			wrapper.innerHTML = "Hello world!";
-		}
-
-		// pass the created content back to MM to add to DOM.
 		return wrapper;
 	},
 

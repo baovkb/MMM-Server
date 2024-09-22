@@ -2,6 +2,7 @@ var NodeHelper = require("node_helper");
 const Websocket = require('ws');
 var wss = null;
 var clients = [];
+const port = 9090;
 
 module.exports = NodeHelper.create({
 
@@ -37,7 +38,6 @@ module.exports = NodeHelper.create({
 	},
 
 	initServer() {
-		const port = 9090;
 		wss = new Websocket.Server({port: port});
 
 		wss.on('connection', ws => {
