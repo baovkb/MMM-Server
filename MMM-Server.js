@@ -41,7 +41,8 @@ Module.register("MMM-Server", {
 		if(notification==="ALL_MODULES_STARTED") {
 			this.sendSocketNotification("CONFIG",this.config)
 		} else if (notification === "EXT_VOLUME_GET") {
-			if (this.speakerVolume == payload['Speaker'] && this.recordVolume == payload['Recorder'])
+			if (this.speakerVolume === payload['Speaker'] 
+				&& this.recordVolume === payload['Recorder'])
 				return;
 
 			this.speakerVolume = payload['Speaker'];
