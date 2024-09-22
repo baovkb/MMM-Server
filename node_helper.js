@@ -1,13 +1,18 @@
 var NodeHelper = require("node_helper");
 const Websocket = require('ws');
+const { exec } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+
 var wss = null;
 var clients = [];
 const port = 9090;
+const configPath = path.join(__dirname, '../..', 'config/config.js');
+const config = require(configPath)
 
 module.exports = NodeHelper.create({
 
 	init(){
-		console.log("init module helper SampleModule");
 	},
 
 	start() {
@@ -63,6 +68,39 @@ module.exports = NodeHelper.create({
 					case 'request update config module':
 						this.sendSocketNotification('REQUEST_UPDATE_CONFIG_MODULE', msg['data']);
 						break;
+					case 'request save config':
+						this.saveConfig(msg['data']);
+						break;
+					case 'request backup':
+						break;
+					case 'get backup files':
+						break;
+					case 'reboot magic mirror':
+						exec('pm2 restart mm', (error, stdout, stderr) => {
+							if (error) {
+								console.error(`Error: ${error.message}`);
+								return;
+							}
+							if (stderr) {
+								console.error(`stderr: ${stderr}`);
+								return;
+							}
+							console.log(`stdout: ${stdout}`);
+						});
+						break;
+					case 'reboot system':
+						exec('pm2 stop mm && sudo reboot', (error, stdout, stderr) => {
+							if (error) {
+								console.error(`Error: ${error.message}`);
+								return;
+							}
+							if (stderr) {
+								console.error(`stderr: ${stderr}`);
+								return;
+							}
+							console.log(`stdout: ${stdout}`);
+						});
+						break;
 					default: break;
 				}
 			});
@@ -70,4 +108,38 @@ module.exports = NodeHelper.create({
 		  
 		  console.log(`WebSocket server is running on ws://localhost:${port}`);
 	},
+	saveConfig: function(requestConfig) {
+		isExist = false;
+
+		for (let module of config['modules']) {
+			if (module['module'] === requestConfig['name']) {
+				module['config'] = requestConfig['config'];
+				isExist = true;
+				break;
+			}
+		}
+
+		if (isExist) {
+			strJson = 'let config = ' 
+			+ JSON.stringify(config, null, 3) 
+			+ '\nif (typeof module !== "undefined") { module.exports = config; }';
+
+			const tmpConfigPath = path.join(__dirname, 'tmp/config.js');
+			
+			fs.writeFileSync(tmpConfigPath, strJson, (err) => {
+				if (err) {
+					return false;
+				  }
+				  try {
+					fs.renameSync(tmpConfigPath, path.dirname(configPath));
+
+					console.log('change config completely');
+					return true;
+				  } catch (e) {
+					return false;
+				  }
+			});
+
+		} else return false;
+	}
 });

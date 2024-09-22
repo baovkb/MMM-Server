@@ -61,9 +61,11 @@ Module.register("MMM-Server", {
 			MM.getModules().forEach(module => {
 				this.modules.push({
 					'identifier': module.identifier,
+					'name': module.name,
 					'config': module.config
 				});
 			});
+
 			this.sendUpdate({
 				'action': 'all modules',
 				'data': this.modules
@@ -104,9 +106,9 @@ Module.register("MMM-Server", {
 				'record volume': this.recordVolume,
 				'all modules': this.modules,
 				'modules by page': {
-							page: payload['page'],
-							total_page: payload['totalPage'],
-							page_modules: payload['page_modules']
+							page: this.page,
+							total_page: this.totalPage,
+							page_modules: this.page_modules
 						}
 			});
 		} else if (notification === "REQUEST_SPEAKER_VOLUME") {
