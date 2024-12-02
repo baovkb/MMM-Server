@@ -79,12 +79,19 @@ let config = {
       },
       {
          "module": "MMM-Gmail-Feed",
-         "position": "top_left",
+         "position": "top_right",
          "config": {
             "gmail": "magicmirrorbyvk@gmail.com",
             "password": "yqcu bpdg lfqp fhdc",
-            "fetchInterval": 10000,
-            "maxMails": 4
+            "maxMails": 1,
+            "test": {
+               "key1": 3,
+               "key2": "test",
+               "key3": {
+                  "key31": true
+               }
+            },
+            "fetchInterval": 10000
          }
       }
    ]

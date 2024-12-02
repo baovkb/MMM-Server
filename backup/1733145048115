@@ -1,0 +1,146 @@
+let config = {
+   "address": "0.0.0.0",
+   "port": 8080,
+   "basePath": "/",
+   "ipWhitelist": [],
+   "useHttps": false,
+   "httpsPrivateKey": "",
+   "httpsCertificate": "",
+   "language": "vi",
+   "locale": "vi-VN",
+   "logLevel": [
+      "INFO",
+      "LOG",
+      "WARN",
+      "ERROR"
+   ],
+   "timeFormat": 24,
+   "units": "metric",
+   "modules": [
+      {
+         "module": "alert",
+         "config": {}
+      },
+      {
+         "module": "MMM-Server",
+         "position": "top_center",
+         "config": {}
+      },
+      {
+         "module": "clock",
+         "position": "top_left",
+         "config": {
+            "timeFormat": 24,
+            "timezone": "Asia/Ho_Chi_Minh",
+            "displaySeconds": true,
+            "showPeriod": false
+         }
+      },
+      {
+         "module": "newsfeed",
+         "position": "bottom_bar",
+         "config": {
+            "feeds": [
+               {
+                  "title": "VNExpress",
+                  "url": "https://vnexpress.net/rss/tin-noi-bat.rss"
+               },
+            ],
+            "showSourceTitle": true,
+            "showPublishDate": true,
+            "broadcastNewsFeeds": true,
+            "broadcastNewsUpdates": true,
+            "showDescription": true
+         }
+      },
+      {
+         "module": "weather",
+         "position": "top_right",
+         "classes": "currentWeather",
+         "config": {
+            "weatherProvider": "openweathermap",
+            "type": "current",
+            "location": "Thanh pho Ho Chi Minh",
+            "locationID": "1566083",
+            "apiKey": "2c2725febb28e6d5995ffb70f07db5c0"
+         }
+      },
+      {
+         "module": "EXT-Alert",
+         "config": {
+            "debug": false,
+            "ignore": []
+         }
+      },
+   //    {
+   //       "module": "MMM-VietNamEventsCalendar",
+   //       classes: "calendar_vn",
+   //       "position": "top_left",
+   //       "config": {
+   //           "lunarColor": "LightGreen",
+   //           "calendars": [
+   //             {
+   //               "url": "https://calendar.google.com/calendar/ical/anhquantong77%40gmail.com/public/basic.ics",
+   //               "color": "Violet",
+   //               "title": "Google Calendar"
+   //             }, 
+   //          ],
+   //          "personalDateEvent":[
+   //           {
+   //               "day": 7,
+   //               "month": 7,
+   //               "title": "Xiu BirthDay :D"
+   //           }]
+   //       }
+   //   },
+
+   {
+      module: "MMM-Screen-Control",
+      position: "bottom_bar",
+      config: {
+         profiles: [
+            {
+               name: "default",
+               pages: [
+                  ["MMM-Server", "newsfeed"],
+                  ["weather"], 
+               ]
+            },
+            {
+               name: "bao",
+               pages: [
+                  ["MMM-Server", "weather", "MMM-Face-Reco-DNN"],
+                  ['clock'], 
+               ]
+            }
+         ]
+      }
+   },
+
+   {
+      module: 'MMM-Face-Reco-DNN',
+      position: 'top_center',
+      config: {
+         logoutDelay: 5000
+      }
+   },
+      {
+         "module": "MMM-Gmail-Feed",
+         "position": "top_right",
+         "config": {
+            "gmail": "magicmirrorbyvk@gmail.com",
+            "password": "yqcu bpdg lfqp fhdc",
+            "maxMails": 5,
+            "test": {
+               "key1": 3,
+               "key2": "test",
+               "key3": {
+                  "key31": true
+               }
+            },
+            "fetchInterval": 1000000
+         }
+      }
+   ]
+}
+if (typeof module !== "undefined") { module.exports = config; }

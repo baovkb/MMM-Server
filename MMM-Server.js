@@ -1,6 +1,12 @@
 Module.register("MMM-Server", {
+	qrcode: null,
+	ip: null,
+	config: null,
+
 	defaults: {
-		message: "default message if none supplied in config.js"
+		qr_size: 132,
+		username: 'admin',
+		password: 'admin'
 	},
 
 	init: function(){
@@ -38,11 +44,8 @@ Module.register("MMM-Server", {
 			case "DOM_OBJECTS_CREATED":
 				this.sendSocketNotification("GET_MODULES_CONFIG");
 				break;
-			case "MMM-Server":
-				if (payload['type'] === 'MODULES_UPDATED'
-					|| payload['type'] === 'PAGE_CHANGED') {
-						this.sendSocketNotification("UPDATE_MODULES_BY_PAGE", payload);
-					}
+			case "PAGE_CHANGED":
+				this.sendSocketNotification("UPDATE_MODULES_BY_PAGE", payload);
 				break;
 			default: break;
 		}
@@ -54,9 +57,18 @@ Module.register("MMM-Server", {
 		} else if (notification === "REQUEST_RECORD_VOLUME") {
 			this.sendNotification("EXT_VOLUME-RECORDER_SET", payload);
 		} else if (notification === "REQUEST_NEXT_PAGE") {
-			this.sendNotification("MMM-Screen-Control", {type: "CHANGE_PAGE", cmd: "EXT_PAGES-INCREMENT"});
+			this.sendNotification("MMM-Screen-Control", {type: "NEXT_PAGE"});
 		} else if (notification === "REQUEST_PREVIOUS_PAGE") {
-			this.sendNotification("MMM-Screen-Control", {type: "CHANGE_PAGE", cmd: "EXT_PAGES-DECREMENT"});
+			this.sendNotification("MMM-Screen-Control", {type: "PREVIOUS_PAGE"});
+		} else if (notification === "REQUEST_UPDATE_MODULES") {
+			this.sendNotification('MMM-Screen-Control', {
+				type: "CHANGE_MODULES",
+				data: payload,
+			});
+		} else if (notification === 'IP_ADDRESS') {
+			this.qrcode = payload['qr_code']
+			this.ip = payload['ip_address']
+			this.updateDom();
 		}
 	},
 
@@ -70,6 +82,21 @@ Module.register("MMM-Server", {
 
 	getDom: function() {
 		var wrapper = document.createElement("div");
+		wrapper.style.textAlign = "center"; 
+
+		if (this.qrcode != null && this.ip != null) {
+			image_node = document.createElement('img');
+			image_node.src = this.qrcode
+			image_node.width = this.config.qr_size
+			image_node.height = this.config.qr_size
+			wrapper.appendChild(image_node)
+
+			ip_node = document.createElement('p');
+			ip_node.textContent = this.ip
+			wrapper.appendChild(ip_node)
+
+			return wrapper
+		}
 		return wrapper;
 	},
 })
